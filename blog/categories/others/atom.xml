@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Others | Yuto's Blog]]></title>
+  <link href="http://ytxgou988.github.io/blog/categories/others/atom.xml" rel="self"/>
+  <link href="http://ytxgou988.github.io/"/>
+  <updated>2013-08-12T15:11:34+08:00</updated>
+  <id>http://ytxgou988.github.io/</id>
+  <author>
+    <name><![CDATA[Yuto]]></name>
+    <email><![CDATA[ytxgou988@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress]]></title>
+    <link href="http://ytxgou988.github.io/blog/2013/08/12/octopress/"/>
+    <updated>2013-08-12T12:43:00+08:00</updated>
+    <id>http://ytxgou988.github.io/blog/2013/08/12/octopress</id>
+    <content type="html"><![CDATA[<h1>Octopress Setup</h1>
+
+<p>Octopress is a framework designed by Brandon Mathis for Jekyll, the blog aware static site generator powering Github Pages. To start blogging with Jekyll, you have to write your own HTML templates, CSS, Javascripts and set up your configuration. But with Octopress All of that is already taken care of.</p>
+
+<h3>Setup Octopress</h3>
+
+<p><code>
+git clone git://github.com/imathis/octopress.git octopress
+cd octopress    # If you use RVM, You'll be asked if you trust the .rvmrc file (say yes).
+ruby --version  # Should report Ruby 1.9.3
+</code></p>
+
+<h5>Next, install dependencies.</h5>
+
+<p><code>
+gem install bundler
+rbenv rehash    # If you use rbenv, rehash to be able to run the bundle command
+bundle install
+</code></p>
+
+<h5>Install the default Octopress theme.</h5>
+
+<p><code>
+rake install
+</code></p>
+
+<h3>Blog Posts</h3>
+
+<p>Blog posts must be stored in the source/_posts directory and named according to Jekyll’s naming conventions: YYYY-MM-DD-post-title.markdown. The name of the file will be used as the url slug, and the date helps with file distinction and determines the sorting order for post loops.</p>
+
+<p>Octopress provides a rake task to create new blog posts with the right naming conventions, with sensible yaml metadata.</p>
+
+<h5>Syntax</h5>
+
+<p><code>
+rake new_post["title"]
+</code></p>
+
+<p>new_post expects a naturally written title and strips out undesirable url characters when creating the filename. The default file extension for new posts is markdown but you can configure that in the Rakefile.</p>
+
+<h3>Generate &amp; Preview</h3>
+
+<p><code>
+rake generate   # Generates posts and pages into the public directory
+rake watch      # Watches source/ and sass/ for changes and regenerates
+rake preview    # Watches, and mounts a webserver at http://localhost:4000
+</code></p>
+
+<h3>Deploying to Github Pages</h3>
+
+<p><code>
+rake generate
+rake deploy
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hello world]]></title>
+    <link href="http://ytxgou988.github.io/blog/2013/08/11/hello-world/"/>
+    <updated>2013-08-11T22:13:00+08:00</updated>
+    <id>http://ytxgou988.github.io/blog/2013/08/11/hello-world</id>
+    <content type="html"><![CDATA[<p>将这篇作为Blog的开始，Find a good job~</p>
+
+<hr />
+
+<h3>fighting！</h3>
+]]></content>
+  </entry>
+  
+</feed>
