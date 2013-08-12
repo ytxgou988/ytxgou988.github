@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Yuto's Blog]]></title>
+  <link href="http://ytxgou988.github.io/feed" rel="self"/>
+  <link href="http://ytxgou988.github.io/"/>
+  <updated>2013-08-12T14:49:22+08:00</updated>
+  <id>http://ytxgou988.github.io/</id>
+  <author>
+    <name><![CDATA[Yuto]]></name>
+    <email><![CDATA[ytxgou988@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress]]></title>
+    <link href="http://ytxgou988.github.io/blog/2013/08/12/octopress/"/>
+    <updated>2013-08-12T12:43:00+08:00</updated>
+    <id>http://ytxgou988.github.io/blog/2013/08/12/octopress</id>
+    <content type="html"><![CDATA[<h1>Octopress Setup</h1>
+
+<p>Octopress is a framework designed by Brandon Mathis for Jekyll, the blog aware static site generator powering Github Pages. To start blogging with Jekyll, you have to write your own HTML templates, CSS, Javascripts and set up your configuration. But with Octopress All of that is already taken care of.</p>
+
+<h3>Setup Octopress</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git clone git://github.com/imathis/octopress.git octopress
+</span><span class='line'>cd octopress    # If you use RVM, You'll be asked if you trust the .rvmrc file (say yes).
+</span><span class='line'>ruby --version  # Should report Ruby 1.9.3</span></code></pre></td></tr></table></div></figure>
+
+
+<h5>Next, install dependencies.</h5>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install bundler
+</span><span class='line'>rbenv rehash    # If you use rbenv, rehash to be able to run the bundle command
+</span><span class='line'>bundle install</span></code></pre></td></tr></table></div></figure>
+
+
+<h5>Install the default Octopress theme.</h5>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake install</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Blog Posts</h3>
+
+<p>Blog posts must be stored in the source/_posts directory and named according to Jekyll’s naming conventions: YYYY-MM-DD-post-title.markdown. The name of the file will be used as the url slug, and the date helps with file distinction and determines the sorting order for post loops.</p>
+
+<p>Octopress provides a rake task to create new blog posts with the right naming conventions, with sensible yaml metadata.</p>
+
+<h5>Syntax</h5>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake new_post["title"]</span></code></pre></td></tr></table></div></figure>
+
+
+<p>new_post expects a naturally written title and strips out undesirable url characters when creating the filename. The default file extension for new posts is markdown but you can configure that in the Rakefile.</p>
+
+<h3>Generate &amp; Preview</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake generate   # Generates posts and pages into the public directory
+</span><span class='line'>rake watch      # Watches source/ and sass/ for changes and regenerates
+</span><span class='line'>rake preview    # Watches, and mounts a webserver at http://localhost:4000</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Deploying to Github Pages</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake generate
+</span><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Hello world]]></title>
+    <link href="http://ytxgou988.github.io/blog/2013/08/11/hello-world/"/>
+    <updated>2013-08-11T22:13:00+08:00</updated>
+    <id>http://ytxgou988.github.io/blog/2013/08/11/hello-world</id>
+    <content type="html"><![CDATA[<p>将这篇作为Blog的开始，Find a good job~</p>
+
+<hr />
+
+<h3>fighting！</h3>
+]]></content>
+  </entry>
+  
+</feed>
