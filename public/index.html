@@ -9,7 +9,7 @@
   <meta name="author" content="Yuto">
 
   
-  <meta name="description" content="Octopress Setup Octopress is a framework designed by Brandon Mathis for Jekyll, the blog aware static site generator powering Github Pages. To start &hellip;">
+  <meta name="description" content="作为一个Python玩家，爬虫可以说是不得不会的基本功。趁着找工作的需求，学写个BYR论坛招聘信息的爬虫 第三方Python包 Request:Requests包可以代替urllib2库抓取网页信息。正如介绍所说，Requests——HTTP for Humans， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -71,6 +71,105 @@
       <div id="content">
         <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/08/19/pa-chong-a-pa-chong/">爬虫啊爬虫</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-19T13:59:00+08:00" pubdate data-updated="true">Aug 19<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/08/19/pa-chong-a-pa-chong/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>作为一个Python玩家，爬虫可以说是不得不会的基本功。趁着找工作的需求，学写个BYR论坛招聘信息的爬虫</p>
+
+<hr />
+
+<h3>第三方Python包</h3>
+
+<ul>
+<li>Request:Requests包可以代替urllib2库抓取网页信息。正如介绍所说，Requests——HTTP for Humans，Requests比urllib2库更为简洁</li>
+<li>BeautifulSoup:BeautifulSoup包用于HTML标签的分析，可以避免复杂的正则表达式</li>
+<li>Redis:Redis是一种NoSQL，用于存放抓取的招聘信息</li>
+</ul>
+
+
+<hr />
+
+<h3>网页信息获取</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>r = requests.get(host+board+pages, headers=headers)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>首先，先调用requests包的get函数取得网页信息。由于BYR论坛采用动态网页加载，需要加上XMLHttpRequest以取得完整内容。</p>
+
+<h3>标签分析</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>soup = BeautifulSoup(r.text)
+</span><span class='line'>info = soup.findAll('a', href=re.compile(r"/article/JobInfo/\d+"), title=None)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>利用beautifulsoup包对网页源码进行解析，取得帖子的地址与标题。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>for i in info:
+</span><span class='line'>    if i.parent.parent.get("class") == "top":
+</span><span class='line'>        continue
+</span><span class='line'>    else:
+</span><span class='line'>        url = host + re.findall(href, str(i))[0]
+</span><span class='line'>        title = re.findall(r'&gt;(.+)&lt;', str(i))[0]</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过css属性将置顶帖过滤，并将地址补全</p>
+
+<h3>信息储存</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>add('url', url+'   '+title)</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将取得的信息存到redis的集合(sets)中，可以避免重复</p>
+
+<h3>总结</h3>
+
+<p>这还只是一个初步的抓取功能，后续还需完善信息显示与关键词过滤等功能。</p>
+
+<p>网络爬虫是一个十分实用的工具，值得好好研究。</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -223,6 +322,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/08/19/pa-chong-a-pa-chong/">爬虫啊爬虫</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/08/12/octopress/">Octopress</a>
