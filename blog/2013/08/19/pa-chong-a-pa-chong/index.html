@@ -5,14 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>About Me - Yuto's Blog</title>
+  <title>爬虫啊爬虫 - Yuto's Blog</title>
   <meta name="author" content="Yuto">
 
   
-  <meta name="description" content="About Me Aug 12th, 2013 Welcome to my blog! Have a good time~ Name: Zheng Yu
-Location: Beijing
-Github: https://github.com/ytxgou988
-Weibo: http:// &hellip;">
+  <meta name="description" content="作为一个Python玩家，爬虫可以说是不得不会的基本功。趁着找工作的需求，学写个BYR论坛招聘信息的爬虫 第三方Python包 Request:Requests包可以代替urllib2库抓取网页信息。正如介绍所说，Requests——HTTP for Humans， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +18,7 @@ Weibo: http:// &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ytxgou988.github.io/about/">
+  <link rel="canonical" href="http://ytxgou988.github.io/blog/2013/08/19/pa-chong-a-pa-chong/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -73,11 +70,15 @@ Weibo: http:// &hellip;">
     <div id="main">
       <div id="content">
         <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">About Me</h1>
-    <p class="meta">
+    
+      <h1 class="entry-title">爬虫啊爬虫</h1>
+    
+    
+      <p class="meta">
+        
 
 
 
@@ -89,52 +90,119 @@ Weibo: http:// &hellip;">
   
 
 
-<time datetime="2013-08-12T13:50:00+08:00" pubdate data-updated="true">Aug 12<span>th</span>, 2013</time></p>
+<time datetime="2013-08-19T13:59:00+08:00" pubdate data-updated="true">Aug 19<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
   </header>
-  
-  <h2>Welcome to my blog!</h2>
 
-<h3>Have a good time~</h3>
+
+<div class="entry-content"><p>作为一个Python玩家，爬虫可以说是不得不会的基本功。趁着找工作的需求，学写个BYR论坛招聘信息的爬虫</p>
 
 <hr />
 
+<h3>第三方Python包</h3>
+
 <ul>
-<li>Name:   Zheng Yu</li>
-<li>Location:   Beijing</li>
-<li>Github: <a href="https://github.com/ytxgou988">https://github.com/ytxgou988</a></li>
-<li>Weibo:  <a href="http://weibo.com/ytxgou988">http://weibo.com/ytxgou988</a></li>
+<li>Request:Requests包可以代替urllib2库抓取网页信息。正如介绍所说，Requests——HTTP for Humans，Requests比urllib2库更为简洁</li>
+<li>BeautifulSoup:BeautifulSoup包用于HTML标签的分析，可以避免复杂的正则表达式</li>
+<li>Redis:Redis是一种NoSQL，用于存放抓取的招聘信息</li>
 </ul>
 
 
-  
-    <footer>
-      <p class="meta">
-        
-        
+<hr />
+
+<h3>网页信息获取</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>r = requests.get(host+board+pages, headers=headers)</span></code></pre></td></tr></table></div></figure>
 
 
+<p>首先，先调用requests包的get函数取得网页信息。由于BYR论坛采用动态网页加载，需要加上XMLHttpRequest以取得完整内容。</p>
+
+<h3>标签分析</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>soup = BeautifulSoup(r.text)
+</span><span class='line'>info = soup.findAll('a', href=re.compile(r"/article/JobInfo/\d+"), title=None)</span></code></pre></td></tr></table></div></figure>
 
 
+<p>利用beautifulsoup包对网页源码进行解析，取得帖子的地址与标题。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>for i in info:
+</span><span class='line'>    if i.parent.parent.get("class") == "top":
+</span><span class='line'>        continue
+</span><span class='line'>    else:
+</span><span class='line'>        url = host + re.findall(href, str(i))[0]
+</span><span class='line'>        title = re.findall(r'&gt;(.+)&lt;', str(i))[0]</span></code></pre></td></tr></table></div></figure>
 
 
+<p>通过css属性将置顶帖过滤，并将地址补全</p>
+
+<h3>信息储存</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>add('url', url+'   '+title)</span></code></pre></td></tr></table></div></figure>
 
 
-  
+<p>将取得的信息存到redis的集合(sets)中，可以避免重复</p>
+
+<h3>总结</h3>
+
+<p>这还只是一个初步的抓取功能，后续还需完善信息显示与关键词过滤等功能。</p>
+
+<p>网络爬虫是一个十分实用的工具，值得好好研究。</p>
+</div>
 
 
-<time datetime="2013-08-12T13:50:00+08:00" pubdate data-updated="true">Aug 12<span>th</span>, 2013</time>
-        
-      </p>
+  <footer>
+    <p class="meta">
       
-        <div class="sharing">
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Yuto</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-19T13:59:00+08:00" pubdate data-updated="true">Aug 19<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
   
   
   
 </div>
 
+    
+    <p class="meta">
       
-    </footer>
-  
+        <a class="basic-alignment left" href="/blog/2013/08/12/octopress/" title="Previous Post: Octopress">&laquo; Octopress</a>
+      
+      
+    </p>
+  </footer>
 </article>
 
   <section>
@@ -218,8 +286,8 @@ Weibo: http:// &hellip;">
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://ytxgou988.github.io/about/index.html';
-        var disqus_url = 'http://ytxgou988.github.io/about/index.html';
+        var disqus_identifier = 'http://ytxgou988.github.io/blog/2013/08/19/pa-chong-a-pa-chong/';
+        var disqus_url = 'http://ytxgou988.github.io/blog/2013/08/19/pa-chong-a-pa-chong/';
         var disqus_script = 'embed.js';
       
     (function () {
