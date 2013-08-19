@@ -3,7 +3,7 @@ layout: post
 title: "爬虫啊爬虫"
 date: 2013-08-19 13:59
 comments: true
-categories: 
+categories: Python
 ---
 作为一个Python玩家，爬虫可以说是不得不会的基本功。趁着找工作的需求，学写个BYR论坛招聘信息的爬虫
 - - - 
