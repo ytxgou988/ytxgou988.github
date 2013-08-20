@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Quickly navigate your filesystem from the command-line - Yuto's Blog</title>
+  <meta name="author" content="Yuto">
+
+  
+  <meta name="description" content="Transport from jeroen janssens Jumping with symbolic links Under the hood this manual solution comes down to storing symbolic links in a hidden &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://ytxgou988.github.io/blog/2013/08/20/mark/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Yuto's Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body>
+  <header role="banner"><hgroup>
+  <h1><a href="/">Yuto's Blog</a></h1>
+  
+    <h2>Welcome</h2>
+  
+</hgroup>
+
+</header>
+  <div id="navigation">
+    <nav role="navigation"><ul class="subscription" data-subscription="rss email">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+    <li><a href="ytxgou988@gmail.com" rel="subscribe-email" title="subscribe via email">Email</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:ytxgou988.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/about">About Me</a></li>
+</ul>
+
+</nav>
+  </div>
+  <div id="body"  >
+    <div id="main">
+      <div id="content">
+        <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Quickly Navigate Your Filesystem From the Command-line</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-20T09:31:00+08:00" pubdate data-updated="true">Aug 20<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h4>Transport from <a href="http://jeroenjanssens.com/2013/08/16/quickly-navigate-your-filesystem-from-the-command-line.html">jeroen janssens</a></h4>
+
+<h3>Jumping with symbolic links</h3>
+
+<p>Under the hood this manual solution comes down to storing symbolic links in a hidden directory (e.g., <code>~/.marks</code>). There are four shell functions <code>jump</code>, <code>mark</code>, <code>unmark</code>, and <code>marks</code>, and they look like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>export MARKPATH=$HOME/.marks
+</span><span class='line'>function jump { 
+</span><span class='line'>        cd -P "$MARKPATH/$1" 2&gt;/dev/null || echo "No such mark: $1"
+</span><span class='line'>}
+</span><span class='line'>function mark { 
+</span><span class='line'>        mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
+</span><span class='line'>}
+</span><span class='line'>function unmark { 
+</span><span class='line'>        rm -i "$MARKPATH/$1"
+</span><span class='line'>}
+</span><span class='line'>function marks {
+</span><span class='line'>        ls -l "$MARKPATH" | sed 's/  / /g' | cut -d' ' -f9- | sed 's/ -/\t-/g' && echo
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Put this in your <code>.zshrc</code> or <code>.bashrc</code> and you&rsquo;re ready to jump (Mac OS X users need a slightly different version of the marks function; see below). I have also turned this into a plugin for oh-my-zsh called <code>jump</code>, but that&rsquo;s currently in a pull-request. To add a new bookmark, <code>cd</code> into the directory and <code>mark</code> it with a name to your liking:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ cd ~/some/very/deep/often-used/directory
+</span><span class='line'>$ mark deep</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This adds a symbolic link named <code>deep</code> to the directory <code>~/.marks</code>. To <code>jump</code> to this directory, type the following from any place in the filesystem:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ jump deep</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To remove the bookmark (i.e., the symbolic link), type:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ unmark deep</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can view all marks by typing:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ marks
+</span><span class='line'>
+</span><span class='line'>deep    -&gt; /home/johndoe/some/very/deep/often-used/directory
+</span><span class='line'>foo     -&gt; /usr/bin/foo/bar</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&rsquo;s all there is to it!</p>
+
+<h3>Adding tab completion</h3>
+
+<p>In order to add tab completion for the jump and unmark functions, add the following code to your <code>.zshrc</code> (thanks to tiziano88):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>function _completemarks {
+</span><span class='line'>      reply=($(ls $MARKPATH))
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>compctl -K _completemarks jump
+</span><span class='line'>compctl -K _completemarks unmark</span></code></pre></td></tr></table></div></figure>
+
+
+<p>or the following to your <code>.bashrc</code> (thanks to microcolonel):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>_completemarks() {
+</span><span class='line'>      local curw=${COMP_WORDS[COMP_CWORD]}
+</span><span class='line'>        local wordlist=$(find $MARKPATH -type l -printf "%f\n")
+</span><span class='line'>          COMPREPLY=($(compgen -W '${wordlist[@]}' -- "$curw"))
+</span><span class='line'>            return 0
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>complete -F _completemarks jump unmark</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you now type jump or unmark and then press , you see a list of available marks. Neat!</p>
+
+<h4>Transport from <a href="http://jeroenjanssens.com/2013/08/16/quickly-navigate-your-filesystem-from-the-command-line.html">jeroen janssens</a></h4>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Yuto</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-20T09:31:00+08:00" pubdate data-updated="true">Aug 20<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linux/'>Linux</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/08/19/pa-chong-a-pa-chong/" title="Previous Post: 爬虫啊爬虫">&laquo; 爬虫啊爬虫</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/08/20/mark/">Quickly navigate your filesystem from the command-line</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/19/pa-chong-a-pa-chong/">爬虫啊爬虫</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/12/octopress/">Octopress</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/11/hello-world/">Hello world</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/ytxgou988">@ytxgou988</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'ytxgou988',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+      </div>
+    </div>
+    <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Yuto -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a>. Design by <a href="http://octopressthemes.com">Octopress Themes</a></span>
+</p>
+
+</footer>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'yutosblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://ytxgou988.github.io/blog/2013/08/20/mark/';
+        var disqus_url = 'http://ytxgou988.github.io/blog/2013/08/20/mark/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</body>
+</html>

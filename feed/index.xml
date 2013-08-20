@@ -4,7 +4,7 @@
   <title><![CDATA[Yuto's Blog]]></title>
   <link href="http://ytxgou988.github.io/feed" rel="self"/>
   <link href="http://ytxgou988.github.io/"/>
-  <updated>2013-08-19T17:36:16+08:00</updated>
+  <updated>2013-08-20T09:42:05+08:00</updated>
   <id>http://ytxgou988.github.io/</id>
   <author>
     <name><![CDATA[Yuto]]></name>
@@ -12,6 +12,123 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Quickly navigate your filesystem from the command-line]]></title>
+    <link href="http://ytxgou988.github.io/blog/2013/08/20/mark/"/>
+    <updated>2013-08-20T09:31:00+08:00</updated>
+    <id>http://ytxgou988.github.io/blog/2013/08/20/mark</id>
+    <content type="html"><![CDATA[<h4>Transport from <a href="http://jeroenjanssens.com/2013/08/16/quickly-navigate-your-filesystem-from-the-command-line.html">jeroen janssens</a></h4>
+
+<h3>Jumping with symbolic links</h3>
+
+<p>Under the hood this manual solution comes down to storing symbolic links in a hidden directory (e.g., <code>~/.marks</code>). There are four shell functions <code>jump</code>, <code>mark</code>, <code>unmark</code>, and <code>marks</code>, and they look like this:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>export MARKPATH=$HOME/.marks
+</span><span class='line'>function jump { 
+</span><span class='line'>        cd -P "$MARKPATH/$1" 2&gt;/dev/null || echo "No such mark: $1"
+</span><span class='line'>}
+</span><span class='line'>function mark { 
+</span><span class='line'>        mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
+</span><span class='line'>}
+</span><span class='line'>function unmark { 
+</span><span class='line'>        rm -i "$MARKPATH/$1"
+</span><span class='line'>}
+</span><span class='line'>function marks {
+</span><span class='line'>        ls -l "$MARKPATH" | sed 's/  / /g' | cut -d' ' -f9- | sed 's/ -/\t-/g' && echo
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Put this in your <code>.zshrc</code> or <code>.bashrc</code> and you&rsquo;re ready to jump (Mac OS X users need a slightly different version of the marks function; see below). I have also turned this into a plugin for oh-my-zsh called <code>jump</code>, but that&rsquo;s currently in a pull-request. To add a new bookmark, <code>cd</code> into the directory and <code>mark</code> it with a name to your liking:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ cd ~/some/very/deep/often-used/directory
+</span><span class='line'>$ mark deep</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This adds a symbolic link named <code>deep</code> to the directory <code>~/.marks</code>. To <code>jump</code> to this directory, type the following from any place in the filesystem:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ jump deep</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To remove the bookmark (i.e., the symbolic link), type:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ unmark deep</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can view all marks by typing:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ marks
+</span><span class='line'>
+</span><span class='line'>deep    -&gt; /home/johndoe/some/very/deep/often-used/directory
+</span><span class='line'>foo     -&gt; /usr/bin/foo/bar</span></code></pre></td></tr></table></div></figure>
+
+
+<p>That&rsquo;s all there is to it!</p>
+
+<h3>Adding tab completion</h3>
+
+<p>In order to add tab completion for the jump and unmark functions, add the following code to your <code>.zshrc</code> (thanks to tiziano88):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>function _completemarks {
+</span><span class='line'>      reply=($(ls $MARKPATH))
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>compctl -K _completemarks jump
+</span><span class='line'>compctl -K _completemarks unmark</span></code></pre></td></tr></table></div></figure>
+
+
+<p>or the following to your <code>.bashrc</code> (thanks to microcolonel):</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>_completemarks() {
+</span><span class='line'>      local curw=${COMP_WORDS[COMP_CWORD]}
+</span><span class='line'>        local wordlist=$(find $MARKPATH -type l -printf "%f\n")
+</span><span class='line'>          COMPREPLY=($(compgen -W '${wordlist[@]}' -- "$curw"))
+</span><span class='line'>            return 0
+</span><span class='line'>}
+</span><span class='line'>
+</span><span class='line'>complete -F _completemarks jump unmark</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you now type jump or unmark and then press , you see a list of available marks. Neat!</p>
+
+<h4>Transport from <a href="http://jeroenjanssens.com/2013/08/16/quickly-navigate-your-filesystem-from-the-command-line.html">jeroen janssens</a></h4>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[爬虫啊爬虫]]></title>

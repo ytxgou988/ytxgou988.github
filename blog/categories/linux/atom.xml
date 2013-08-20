@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Linux | Yuto's Blog]]></title>
+  <link href="http://ytxgou988.github.io/blog/categories/linux/atom.xml" rel="self"/>
+  <link href="http://ytxgou988.github.io/"/>
+  <updated>2013-08-20T09:42:05+08:00</updated>
+  <id>http://ytxgou988.github.io/</id>
+  <author>
+    <name><![CDATA[Yuto]]></name>
+    <email><![CDATA[ytxgou988@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Quickly navigate your filesystem from the command-line]]></title>
+    <link href="http://ytxgou988.github.io/blog/2013/08/20/mark/"/>
+    <updated>2013-08-20T09:31:00+08:00</updated>
+    <id>http://ytxgou988.github.io/blog/2013/08/20/mark</id>
+    <content type="html"><![CDATA[<h4>Transport from <a href="http://jeroenjanssens.com/2013/08/16/quickly-navigate-your-filesystem-from-the-command-line.html">jeroen janssens</a></h4>
+
+<h3>Jumping with symbolic links</h3>
+
+<p>Under the hood this manual solution comes down to storing symbolic links in a hidden directory (e.g., <code>~/.marks</code>). There are four shell functions <code>jump</code>, <code>mark</code>, <code>unmark</code>, and <code>marks</code>, and they look like this:</p>
+
+<p>```
+export MARKPATH=$HOME/.marks
+function jump {</p>
+
+<pre><code>    cd -P "$MARKPATH/$1" 2&gt;/dev/null || echo "No such mark: $1"
+</code></pre>
+
+<p>}
+function mark {</p>
+
+<pre><code>    mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
+</code></pre>
+
+<p>}
+function unmark {</p>
+
+<pre><code>    rm -i "$MARKPATH/$1"
+</code></pre>
+
+<p>}
+function marks {</p>
+
+<pre><code>    ls -l "$MARKPATH" | sed 's/  / /g' | cut -d' ' -f9- | sed 's/ -/\t-/g' &amp;&amp; echo
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Put this in your <code>.zshrc</code> or <code>.bashrc</code> and you&rsquo;re ready to jump (Mac OS X users need a slightly different version of the marks function; see below). I have also turned this into a plugin for oh-my-zsh called <code>jump</code>, but that&rsquo;s currently in a pull-request. To add a new bookmark, <code>cd</code> into the directory and <code>mark</code> it with a name to your liking:</p>
+
+<p><code>
+$ cd ~/some/very/deep/often-used/directory
+$ mark deep
+</code></p>
+
+<p>This adds a symbolic link named <code>deep</code> to the directory <code>~/.marks</code>. To <code>jump</code> to this directory, type the following from any place in the filesystem:</p>
+
+<p><code>
+$ jump deep
+</code></p>
+
+<p>To remove the bookmark (i.e., the symbolic link), type:</p>
+
+<p><code>
+$ unmark deep
+</code></p>
+
+<p>You can view all marks by typing:</p>
+
+<p>```
+$ marks</p>
+
+<p>deep    &ndash;> /home/johndoe/some/very/deep/often-used/directory
+foo     &ndash;> /usr/bin/foo/bar
+```</p>
+
+<p>That&rsquo;s all there is to it!</p>
+
+<h3>Adding tab completion</h3>
+
+<p>In order to add tab completion for the jump and unmark functions, add the following code to your <code>.zshrc</code> (thanks to tiziano88):</p>
+
+<p>```
+function _completemarks {</p>
+
+<pre><code>  reply=($(ls $MARKPATH))
+</code></pre>
+
+<p>}</p>
+
+<p>compctl -K <em>completemarks jump
+compctl -K </em>completemarks unmark
+```</p>
+
+<p>or the following to your <code>.bashrc</code> (thanks to microcolonel):</p>
+
+<p>```
+_completemarks() {</p>
+
+<pre><code>  local curw=${COMP_WORDS[COMP_CWORD]}
+    local wordlist=$(find $MARKPATH -type l -printf "%f\n")
+      COMPREPLY=($(compgen -W '${wordlist[@]}' -- "$curw"))
+        return 0
+</code></pre>
+
+<p>}</p>
+
+<p>complete -F _completemarks jump unmark
+```</p>
+
+<p>If you now type jump or unmark and then press , you see a list of available marks. Neat!</p>
+
+<h4>Transport from <a href="http://jeroenjanssens.com/2013/08/16/quickly-navigate-your-filesystem-from-the-command-line.html">jeroen janssens</a></h4>
+]]></content>
+  </entry>
+  
+</feed>
